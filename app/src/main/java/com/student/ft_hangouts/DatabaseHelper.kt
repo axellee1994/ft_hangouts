@@ -1,5 +1,6 @@
 package com.student.ft_hangouts
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -39,5 +40,20 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
         db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
         Log.d("DatabaseHelper", "Database upgraded from version $oldVersion to $newVersion")
+    }
+
+    // Adding a contact
+    // ID is place automatically from the database
+    fun addContact(contact: Contact): Long {
+        val db = this.writableDatabase
+        val values = ContentValues()
+
+        values.put(COL_FIRST_NAME, contact.firstName)
+        values.put(COL_LAST_NAME, contact.lastName )
+        values.put(COL_PHONE, contact.phoneNumber )
+        values.put(COL_EMAIL, contact.email)
+        values.put(COL_INFO, contact.info)
+
+        return db.insert(TABLE_NAME, null, values)
     }
 }
