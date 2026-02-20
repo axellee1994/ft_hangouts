@@ -11,9 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ft_hangouts">
+        
         <activity
             android:name=".AddContactActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ViewContactActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
