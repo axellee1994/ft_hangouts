@@ -18,12 +18,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var databaseHelper: DatabaseHelper
     private lateinit var contactListView: ListView
     private lateinit var fabAddContact: FloatingActionButton
+    private lateinit var adapter: ArrayAdapter<Contact> // Make adapter a class property
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -39,6 +40,16 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddContactActivity::class.java)
             startActivity(intent)
         }
+
+        // The setOnItemClickListener must be inside a method, like onCreate.
+        contactListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedContact = adapter.getItem(position)
+            selectedContact?.let {
+                val intent = Intent(this, ViewContactActivity::class.java)
+                intent.putExtra("CONTACT_ID", it.id) // Pass the ID to the next screen
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onResume() {
@@ -51,7 +62,8 @@ class MainActivity : AppCompatActivity() {
         val contacts = databaseHelper.getAllContacts()
 
         // Create an adapter to map the Contact data to the XML layout elements
-        val adapter = object : ArrayAdapter<Contact>(this, R.layout.contact_list_item, R.id.tvName, contacts) {
+        // Initialize the adapter property here
+        adapter = object : ArrayAdapter<Contact>(this, R.layout.contact_list_item, R.id.tvName, contacts) {
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val view = super.getView(position, convertView, parent)
                 val contact = getItem(position)
@@ -68,13 +80,4 @@ class MainActivity : AppCompatActivity() {
 
         contactListView.adapter = adapter
     }
-
-    contactListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedContact = adapter.getItem(position)
-            selectedContact?.let {
-                val intent = Intent(this, ViewContactActivity::class.java)
-                intent.putExtra("CONTACT_ID", it.id) // Pass the ID to the next screen
-                startActivity(intent)
-            }
-        }
 }
