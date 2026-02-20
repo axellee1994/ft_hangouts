@@ -39,7 +39,7 @@ class ViewContactActivity : BaseActivity() {
         if (contactId != -1L) {
             loadContactData()
         } else {
-            Toast.makeText(this, "Error loading contact", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_loading), Toast.LENGTH_SHORT).show()
             finish() // Close the activity if ID is invalid
         }
 
@@ -76,20 +76,20 @@ class ViewContactActivity : BaseActivity() {
 
         val rowsAffected = databaseHelper.updateContact(updatedContact)
         if (rowsAffected > 0) {
-            Toast.makeText(this, "Contact updated successfully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.contact_updated), Toast.LENGTH_SHORT).show()
             finish() // Return to the list
         } else {
-            Toast.makeText(this, "Failed to update contact", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_update_failed), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun deleteContact() {
         val rowsAffected = databaseHelper.deleteContact(contactId)
         if (rowsAffected > 0) {
-            Toast.makeText(this, "Contact deleted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.contact_deleted), Toast.LENGTH_SHORT).show()
             finish() // Return to the list
         } else {
-            Toast.makeText(this, "Failed to delete contact", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_delete_failed), Toast.LENGTH_SHORT).show()
         }
     }
 }

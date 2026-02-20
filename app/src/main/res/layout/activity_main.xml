@@ -24,6 +24,6 @@
         android:src="@android:drawable/ic_input_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="Add Contact" />
+        android:contentDescription="@string/add_contact_desc" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

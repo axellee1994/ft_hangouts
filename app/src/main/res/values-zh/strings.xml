@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ft_hangouts</string>
+    
+    <string name="add_contact_desc">添加联系人</string>
+    
+    <string name="first_name_hint">名字</string>
+    <string name="last_name_hint">姓氏</string>
+    <string name="phone_hint">电话号码</string>
+    <string name="email_hint">电子邮件</string>
+    <string name="info_hint">备注信息</string>
+    
+    <string name="save_contact">保存联系人</string>
+    <string name="save_changes">保存更改</string>
+    <string name="delete">删除</string>
+    
+    <string name="contact_saved">联系人保存成功</string>
+    <string name="contact_updated">联系人更新成功</string>
+    <string name="contact_deleted">联系人已删除</string>
+    <string name="error_loading">加载联系人出错</string>
+    <string name="error_enter_name">请输入名字</string>
+    <string name="error_update_failed">更新联系人失败</string>
+    <string name="error_delete_failed">删除联系人失败</string>
+    <string name="contact_full_name">%1$s %2$s</string>
+    <string name="last_seen">上次查看： %1$s</string>
+</resources>

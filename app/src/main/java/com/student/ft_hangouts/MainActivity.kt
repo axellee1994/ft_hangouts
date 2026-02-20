@@ -71,7 +71,7 @@ class MainActivity : BaseActivity() {
                 val tvName = view.findViewById<TextView>(R.id.tvName)
                 val tvPhone = view.findViewById<TextView>(R.id.tvPhone)
 
-                tvName.text = "${contact?.firstName} ${contact?.lastName}"
+                tvName.text = context.getString(R.string.contact_full_name, contact?.firstName, contact?.lastName)
                 tvPhone.text = contact?.phoneNumber
 
                 return view

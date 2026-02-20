@@ -10,14 +10,14 @@
         android:id="@+id/et_first_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="First Name" />
+        android:hint="@string/first_name_hint" />
 
     <!-- Field 2 -->
     <EditText
         android:id="@+id/et_last_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Last Name" />
+        android:hint="@string/last_name_hint" />
 
     <!-- Field 3 -->
     <EditText
@@ -25,28 +25,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="phone"
-        android:hint="Phone Number" />
+        android:hint="@string/phone_hint" />
 
     <!-- Field 4 -->
     <EditText
         android:id="@+id/et_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email Address" />
+        android:hint="@string/email_hint" />
 
     <!-- Field 5 -->
     <EditText
         android:id="@+id/et_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Additional Info" />
+        android:hint="@string/info_hint" />
 
     <!-- Button Fild -->
     <Button
         android:id="@+id/submit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Submit"
+        android:text="@string/save_contact"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

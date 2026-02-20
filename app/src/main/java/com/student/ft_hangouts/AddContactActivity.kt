@@ -33,14 +33,14 @@ class AddContactActivity : BaseActivity() {
             val info = etInfo.text.toString()
 
             if (firstName.isEmpty()) {
-                Toast.makeText(this, "Please enter a first name", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_enter_name), Toast.LENGTH_SHORT).show()
             }
             else {
                 // We pass '0' for ID because the database will generate the real one.
                 val newContact = Contact(0, firstName, lastName, phone, email, info)
 
                 dbHelper.addContact(newContact)
-                Toast.makeText(this, "Contact Saved!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.contact_saved), Toast.LENGTH_SHORT).show()
                 finish()
             }
         }

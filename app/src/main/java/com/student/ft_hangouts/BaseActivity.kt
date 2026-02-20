@@ -18,7 +18,7 @@ open class BaseActivity : AppCompatActivity() {
         val lastBackgroundTime = prefs.getString("last_background_time", null)
 
         if (lastBackgroundTime != null) {
-            Toast.makeText(this, "Last seen: $lastBackgroundTime", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.last_seen, lastBackgroundTime), Toast.LENGTH_LONG).show()
             
             // Clear the timestamp so the toast doesn't keep appearing 
             // every time you switch internal screens
