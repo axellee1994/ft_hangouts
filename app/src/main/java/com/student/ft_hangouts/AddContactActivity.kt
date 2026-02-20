@@ -6,7 +6,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class AddContactActivity : AppCompatActivity() {
+class AddContactActivity : BaseActivity() {
 
     // We declare the database helper here so we can use it in onCreate
     private lateinit var dbHelper: DatabaseHelper
