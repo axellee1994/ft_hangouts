@@ -27,4 +27,7 @@
     <string name="color_red_title">红色标题栏</string>
     <string name="color_blue_title">蓝色标题栏</string>
     <string name="color_green_title">绿色标题栏</string>
+
+    <string name="error_update_failed">更新联系人失败</string>
+    <string name="error_delete_failed">删除联系人失败</string>
 </resources>

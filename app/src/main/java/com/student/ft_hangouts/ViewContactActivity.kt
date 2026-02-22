@@ -5,6 +5,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 
 class ViewContactActivity : BaseActivity() {
 
@@ -49,6 +50,17 @@ class ViewContactActivity : BaseActivity() {
 
         btnDelete.setOnClickListener {
             deleteContact()
+        }
+
+        val btnMessage = findViewById<Button>(R.id.btnMessage)
+        btnMessage.setOnClickListener {
+            val contact = databaseHelper.getContact(contactId)
+            contact?.let {
+                val intent = Intent(this, MessageActivity::class.java)
+                intent.putExtra("CONTACT_ID", it.id)
+                intent.putExtra("CONTACT_PHONE", it.phoneNumber)
+                startActivity(intent)
+            }
         }
     }
 

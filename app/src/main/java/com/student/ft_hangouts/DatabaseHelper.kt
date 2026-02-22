@@ -10,7 +10,7 @@ import android.util.Log
 class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         const val TABLE_NAME = "contacts"
         const val COL_ID = "id"
@@ -19,11 +19,24 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
         const val COL_PHONE = "phone_number"
         const val COL_EMAIL = "email"
         const val COL_INFO = "contextual_info"
+
+        const val TABLE_MESSAGES = "messages"
+        const val COL_MSG_ID = "msg_id"
+        const val COL_MSG_CONTACT_ID = "contact_id" 
+        const val COL_MSG_TEXT = "message_text"
+        const val COL_MSG_TIMESTAMP = "timestamp"
+        const val COL_MSG_IS_SENT = "is_sent"
+    }
+
+    // Enable foreign key constraints so ON DELETE CASCADE works
+    override fun onConfigure(db: SQLiteDatabase) {
+        super.onConfigure(db)
+        db.setForeignKeyConstraintsEnabled(true)
     }
 
     // Create database
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_TABLE_QUERY = "CREATE TABLE $TABLE_NAME (" +
+        val CREATE_CONTACTS_TABLE = "CREATE TABLE $TABLE_NAME (" +
                 "$COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "$COL_FIRST_NAME TEXT NOT NULL, " +
                 "$COL_LAST_NAME TEXT NOT NULL, " +
@@ -31,12 +44,23 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
                 "$COL_EMAIL TEXT, " +
                 "$COL_INFO TEXT NOT NULL" +
                 ")"
-        db.execSQL(CREATE_TABLE_QUERY)
-        Log.d("DatabaseHelper", "Database created with table $TABLE_NAME") // Added logging
+        db.execSQL(CREATE_CONTACTS_TABLE)
+
+        val CREATE_MESSAGES_TABLE = "CREATE TABLE $TABLE_MESSAGES (" +
+                "$COL_MSG_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "$COL_MSG_CONTACT_ID INTEGER, " +
+                "$COL_MSG_TEXT TEXT NOT NULL, " +
+                "$COL_MSG_TIMESTAMP TEXT NOT NULL, " +
+                "$COL_MSG_IS_SENT INTEGER NOT NULL, " +
+                "FOREIGN KEY($COL_MSG_CONTACT_ID) REFERENCES $TABLE_NAME($COL_ID) ON DELETE CASCADE" +
+                ")"
+        db.execSQL(CREATE_MESSAGES_TABLE)
+        Log.d("DatabaseHelper", "Database created with contacts and messages tables")
     }
 
     // Update database version
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_MESSAGES")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
         Log.d("DatabaseHelper", "Database upgraded from version $oldVersion to $newVersion")
@@ -119,5 +143,53 @@ class DatabaseHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
     fun deleteContact(id: Long): Int {
         val db = this.writableDatabase
         return db.delete(TABLE_NAME, "$COL_ID=?", arrayOf(id.toString()))
+    }
+
+    // Add a new message to the database
+    fun addMessage(message: Message): Long {
+        val db = this.writableDatabase
+        val values = ContentValues().apply {
+            put(COL_MSG_CONTACT_ID, message.contactId)
+            put(COL_MSG_TEXT, message.text)
+            put(COL_MSG_TIMESTAMP, message.timestamp)
+            put(COL_MSG_IS_SENT, if (message.isSent) 1 else 0) // Convert Boolean to Int
+        }
+        return db.insert(TABLE_MESSAGES, null, values)
+    }
+
+    // Retrieve the conversation history for a specific contact
+    fun getMessagesForContact(contactId: Long): List<Message> {
+        val messageList = mutableListOf<Message>()
+        val db = this.readableDatabase
+        
+        // Query to get messages, ordered by timestamp (oldest to newest)
+        val cursor = db.query(
+            TABLE_MESSAGES, 
+            null, 
+            "$COL_MSG_CONTACT_ID=?", 
+            arrayOf(contactId.toString()),
+            null, null, 
+            "$COL_MSG_TIMESTAMP ASC" 
+        )
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getLong(cursor.getColumnIndexOrThrow(COL_MSG_ID))
+                val text = cursor.getString(cursor.getColumnIndexOrThrow(COL_MSG_TEXT))
+                val timestamp = cursor.getString(cursor.getColumnIndexOrThrow(COL_MSG_TIMESTAMP))
+                val isSentInt = cursor.getInt(cursor.getColumnIndexOrThrow(COL_MSG_IS_SENT))
+
+                val message = Message(
+                    id = id,
+                    contactId = contactId,
+                    text = text,
+                    timestamp = timestamp,
+                    isSent = isSentInt == 1 // Convert Int back to Boolean
+                )
+                messageList.add(message)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return messageList
     }
 }

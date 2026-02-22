@@ -26,4 +26,7 @@
     <string name="color_red_title">Red Header</string>
     <string name="color_blue_title">Blue Header</string>
     <string name="color_green_title">Green Header</string>
+
+    <string name="error_update_failed">Failed to update contact</string>
+    <string name="error_delete_failed">Failed to delete contact</string>
 </resources>

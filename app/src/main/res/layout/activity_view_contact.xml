@@ -74,6 +74,13 @@
                 android:text="@string/save_changes"
                 android:layout_marginStart="8dp"/>
 
+            <Button
+            android:id="@+id/btnMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Send Message"
+            android:layout_marginBottom="12dp"/>
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
