@@ -14,6 +14,27 @@ import java.util.Locale
 
 open class BaseActivity : AppCompatActivity() {
 
+    companion object{
+        var startedActivities = 0
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // If the count was 0, it means the app just came from the background
+        if (startedActivities == 0) {
+            val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+            val lastBackgroundTime = prefs.getString("last_background_time", null)
+
+            if (lastBackgroundTime != null) {
+                Toast.makeText(this, getString(R.string.last_seen, lastBackgroundTime), Toast.LENGTH_LONG).show()
+                // Clear the time so it doesn't show again until the next backgrounding
+                prefs.edit().remove("last_background_time").apply()
+            }
+        }
+        startedActivities++
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Apply the saved color immediately when the activity is created
@@ -75,11 +96,15 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val currentTime = sdf.format(Date())
+        startedActivities--
 
-        val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
-        prefs.edit().putString("last_background_time", currentTime).apply()
+        // If the count reaches 0, the entire app is going to the background
+        if (startedActivities == 0) {
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val currentTime = sdf.format(Date())
+
+            val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+            prefs.edit().putString("last_background_time", currentTime).apply()
+        }
     }
 }
