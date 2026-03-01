@@ -18,6 +18,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 
+
 class MessageActivity : BaseActivity() {
 
     private lateinit var databaseHelper: DatabaseHelper
@@ -75,10 +76,11 @@ class MessageActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         // Start listening for the refresh signal
-        registerReceiver(
+        ContextCompat.registerReceiver(
+            this,
             smsRefreshReceiver,
             IntentFilter("com.student.ft_hangouts.REFRESH_SMS"),
-            Context.RECEIVER_EXPORTED)
+            ContextCompat.RECEIVER_EXPORTED)
         // Refresh messages immediately in case some arrived while we were away
         loadMessages()
     }
@@ -86,7 +88,11 @@ class MessageActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         // Stop listening when the activity is not visible to prevent memory leaks
-        unregisterReceiver(smsRefreshReceiver)
+        try {
+            unregisterReceiver(smsRefreshReceiver)
+        } catch (e: Exception) {
+            // Receiver might not be registered
+        }
     }
 
     
@@ -131,11 +137,20 @@ class MessageActivity : BaseActivity() {
     }
 
     private fun checkPermissionAndSendMessage(messageText: String) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+        val permissions = arrayOf(
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.READ_SMS
+        )
+
+        val missingPermissions = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (missingPermissions.isEmpty()) {
             sendMessage(messageText)
         } else {
-            // Request permission
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS), SMS_PERMISSION_CODE)
+            ActivityCompat.requestPermissions(this, missingPermissions.toTypedArray(), SMS_PERMISSION_CODE)
         }
     }
 
