@@ -37,6 +37,8 @@ class SmsReceiver : BroadcastReceiver() {
                         isSent = false 
                     )
                     databaseHelper.addMessage(newMessage)
+                    val refreshIntent = Intent("com.student.ft_hangouts.REFRESH_SMS")
+                    context.sendBroadcast(refreshIntent)
                 }
             }
         }

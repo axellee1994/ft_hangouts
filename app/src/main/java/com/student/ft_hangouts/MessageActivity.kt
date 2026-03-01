@@ -13,6 +13,10 @@ import androidx.core.content.ContextCompat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 
 class MessageActivity : BaseActivity() {
 
@@ -23,6 +27,12 @@ class MessageActivity : BaseActivity() {
 
     private var contactId: Long = -1
     private var contactPhone: String = ""
+
+    private val smsRefreshReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            loadMessages()
+        }
+    }
 
     companion object {
         private const val SMS_PERMISSION_CODE = 100
@@ -62,11 +72,62 @@ class MessageActivity : BaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Start listening for the refresh signal
+        registerReceiver(
+            smsRefreshReceiver,
+            IntentFilter("com.student.ft_hangouts.REFRESH_SMS"),
+            Context.RECEIVER_EXPORTED)
+        // Refresh messages immediately in case some arrived while we were away
+        loadMessages()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Stop listening when the activity is not visible to prevent memory leaks
+        unregisterReceiver(smsRefreshReceiver)
+    }
+
+    
     private fun loadMessages() {
-        // We will build a custom adapter for this list in the next step, 
-        // but for now, we just want to retrieve the data
         val messages = databaseHelper.getMessagesForContact(contactId)
-        // TODO: Bind messages to ListView
+
+        val adapter = object : android.widget.ArrayAdapter<Message>(this, R.layout.item_message, R.id.tvMessageText, messages) {
+            override fun getView(position: Int, convertView: android.view.View?, parent: android.view.ViewGroup): android.view.View {
+                val view = super.getView(position, convertView, parent)
+                val message = getItem(position)
+
+                val container = view.findViewById<android.widget.LinearLayout>(R.id.messageContainer)
+                val tvText = view.findViewById<android.widget.TextView>(R.id.tvMessageText)
+                val tvTime = view.findViewById<android.widget.TextView>(R.id.tvTimestamp)
+
+                tvText.text = message?.text
+                tvTime.text = message?.timestamp
+
+                // Sent messages -> Right alignment, Light Blue background
+                if (message?.isSent == true) {
+                    container.gravity = android.view.Gravity.END
+                    tvText.setBackgroundResource(android.R.drawable.dialog_holo_light_frame) 
+                    tvText.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#E3F2FD"))
+                } 
+                // Received messages -> Left alignment, Light Grey background
+                else {
+                    container.gravity = android.view.Gravity.START
+                    tvText.setBackgroundResource(android.R.drawable.dialog_holo_light_frame)
+                    tvText.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#F5F5F5"))
+                }
+
+                return view
+            }
+        }
+
+        lvMessages.adapter = adapter
+        
+        // Auto-scroll to the bottom so the newest message is visible
+        if (messages.isNotEmpty()) {
+            lvMessages.setSelection(messages.size - 1)
+        }
     }
 
     private fun checkPermissionAndSendMessage(messageText: String) {
