@@ -19,8 +19,6 @@
     <string name="contact_deleted">联系人已删除</string>
     <string name="error_loading">加载联系人出错</string>
     <string name="error_enter_name">请输入名字</string>
-    <string name="error_update_failed">更新联系人失败</string>
-    <string name="error_delete_failed">删除联系人失败</string>
     <string name="contact_full_name">%1$s %2$s</string>
     <string name="last_seen">上次查看： %1$s</string>
 
