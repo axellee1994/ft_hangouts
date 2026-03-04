@@ -21,7 +21,6 @@ open class BaseActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        // If the count was 0, it means the app just came from the background
         if (startedActivities == 0) {
             val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
             val lastBackgroundTime = prefs.getString("last_background_time", null)
@@ -58,16 +57,12 @@ open class BaseActivity : AppCompatActivity() {
             R.id.color_green -> Color.parseColor("#4CAF50") // Material Green
             else -> return super.onOptionsItemSelected(item)
         }
-
-        // Save the chosen color
         editor.putInt("header_color", selectedColor).apply()
-        
-        // Apply it immediately
         applyHeaderColor()
         return true
     }
 
-    // 3. Function to change the Action Bar color
+    // Function to change the Action Bar color
     private fun applyHeaderColor() {
         val prefs = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
         // Default to a dark grey if no color is saved yet
