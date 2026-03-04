@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 class AddContactActivity : BaseActivity() {
 
-    // We declare the database helper here so we can use it in onCreate
     private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +23,6 @@ class AddContactActivity : BaseActivity() {
         val etInfo = findViewById<EditText>(R.id.et_info)
         val btnSubmit = findViewById<Button>(R.id.submit_button)
 
-        // 3. Set the Click Listener
         btnSubmit.setOnClickListener {
             val firstName = etFirstName.text.toString()
             val lastName = etLastName.text.toString()
